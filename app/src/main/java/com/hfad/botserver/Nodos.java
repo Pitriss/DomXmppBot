@@ -1,5 +1,6 @@
 package com.hfad.botserver;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -63,7 +64,6 @@ public class Nodos {
         Set set = almacenNodos.entrySet();
         Iterator iterator = set.iterator();
 
-// Iterate over HashMap
         while(iterator.hasNext()) {
             Map.Entry mEntry = (Map.Entry)iterator.next();
             Integer key = (Integer) mEntry.getKey();
@@ -71,9 +71,45 @@ public class Nodos {
             if(value.getName().equals(split[0]))
             {
                 value.processDataRecibido(from , msj);
+                return;
             }
         }
 
+    }
+
+    /*public Nodo[] getAlmacen()
+    {
+
+        Nodo[] almacen = new Nodo[almacenNodos.size()];
+        int i = 0;
+        Set set = almacenNodos.entrySet();
+        Iterator iterator = set.iterator();
+
+        while(iterator.hasNext()) {
+            Map.Entry mEntry = (Map.Entry)iterator.next();
+            Integer key = (Integer) mEntry.getKey();
+            Nodo value = (Nodo) mEntry.getValue();
+            almacen[i] = value;
+            i++;
+        }
+        return almacen;
+    }*/
+
+    public ArrayList<Nodo> getAlmacen()
+    {
+        ArrayList<Nodo> almacen = new ArrayList<Nodo>();
+        int i = 0;
+        Set set = almacenNodos.entrySet();
+        Iterator iterator = set.iterator();
+
+        while(iterator.hasNext()) {
+            Map.Entry mEntry = (Map.Entry)iterator.next();
+            Integer key = (Integer) mEntry.getKey();
+            Nodo value = (Nodo) mEntry.getValue();
+            almacen.add(value);
+            i++;
+        }
+        return almacen;
     }
 
 }

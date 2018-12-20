@@ -38,6 +38,25 @@ public class XMPPCliente {
         return ptr_xmpp;
     }
 
+    public void checkIsConnected(final String user, final String pass, final String domain) {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                while(connection.isAuthenticated())
+                {
+                    try {
+                        Thread.sleep(30000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                runLoggin(user,pass,domain);
+            }
+        };
+
+        thread.start();
+    }
+
     public void runLoggin(final String user, final String pass, final String domain)
     {
         Thread thread = new Thread() {
@@ -47,6 +66,7 @@ public class XMPPCliente {
                 try {
                     connection = new XMPPTCPConnection(user, pass, domain);
                     connection.connect().login();
+
                     chatManager = ChatManager.getInstanceFor(connection);
 
                     chatManager.addIncomingListener(new IncomingChatMessageListener() {
@@ -61,6 +81,7 @@ public class XMPPCliente {
                     });
 
                     loadRoster();
+                    isConnected = true;
 
                 }
                 catch (XmppStringprepException e) {
@@ -76,7 +97,14 @@ public class XMPPCliente {
                 }
                 finally {
                     //connectionFinished();
-                    isConnected = true;
+                    if(!isConnected)
+                    {
+                        runLoggin(user,pass,domain);
+                    }
+                    else
+                    {
+                        checkIsConnected(user,pass,domain);
+                    }
                 }
             }
         };

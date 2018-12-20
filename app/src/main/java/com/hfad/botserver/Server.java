@@ -107,12 +107,12 @@ public class Server {
                         nodo = new Nodo("Nodo" + String.valueOf(cnt), (PrintStream) printStream);
                         if(Nodos.getInstance().saveNodo(cnt,nodo))
                         {
-                            printStream.print("Nodo salvado");
+                            //printStream.print("Nodo salvado");
                         }
                         else
                         {
                             nodo = Nodos.getInstance().getNodo(cnt);
-                            printStream.print("Nodo ya existe");
+                            //printStream.print("Nodo ya existe");
                         }
                     }
                     else if(nodo != null)
