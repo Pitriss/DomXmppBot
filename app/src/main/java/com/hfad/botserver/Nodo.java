@@ -1,21 +1,27 @@
 package com.hfad.botserver;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 public class Nodo {
 
     private String name;
     private String sensorName;
     private String actuadorName;
+    private PrintStream printStream;
 
-    public Nodo(String name, String sensorName, String actuadorName) {
+    public Nodo(String name, String sensorName, String actuadorName, PrintStream printStream) {
         this.name = name;
         this.sensorName = sensorName;
         this.actuadorName = actuadorName;
+        this.printStream = printStream;
     }
 
-    public Nodo(String name) {
+    public Nodo(String name, PrintStream printStream) {
         this.name = name;
         this.sensorName = "sensor";
         this.actuadorName = "actuador";
+        this.printStream = printStream;
     }
 
     public String getName() {
@@ -51,5 +57,10 @@ public class Nodo {
             System.out.println("ENVIAR ESTADO SENSOR");
             XMPPCliente.getInstance().sendMsj(msj);
         }
+    }
+
+    public void processDataRecibido(String from,String msj)
+    {
+        printStream.print(msj);
     }
 }

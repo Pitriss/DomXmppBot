@@ -53,6 +53,10 @@ public class XMPPCliente {
                         @Override
                         public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
                             System.out.println("New message from " + from + ": " + message.getBody());
+                            //String body = message.getBody();
+                            //String [] split = body.split(" ");
+                            Nodos.getInstance().processNodoData(from.toString(),message.getBody());
+
                         }
                     });
 

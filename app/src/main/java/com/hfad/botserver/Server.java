@@ -104,7 +104,7 @@ public class Server {
 
                     if(salida.equalsIgnoreCase("/hola\n") && (nodo == null))
                     {
-                        nodo = new Nodo("Nodo" + String.valueOf(cnt));
+                        nodo = new Nodo("Nodo" + String.valueOf(cnt), (PrintStream) printStream);
                         if(Nodos.getInstance().saveNodo(cnt,nodo))
                         {
                             printStream.print("Nodo salvado");

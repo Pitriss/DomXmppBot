@@ -1,7 +1,9 @@
 package com.hfad.botserver;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 public class Nodos {
 
@@ -53,6 +55,25 @@ public class Nodos {
     public Integer countNodos()
     {
         return almacenNodos.size();
+    }
+
+    public void processNodoData(String from, String msj)
+    {
+        String [] split = msj.split(" ");
+        Set set = almacenNodos.entrySet();
+        Iterator iterator = set.iterator();
+
+// Iterate over HashMap
+        while(iterator.hasNext()) {
+            Map.Entry mEntry = (Map.Entry)iterator.next();
+            Integer key = (Integer) mEntry.getKey();
+            Nodo value = (Nodo) mEntry.getValue();
+            if(value.getName().equals(split[0]))
+            {
+                value.processDataRecibido(from , msj);
+            }
+        }
+
     }
 
 }
