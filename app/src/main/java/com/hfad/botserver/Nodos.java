@@ -10,6 +10,7 @@ public class Nodos {
 
     private static Nodos ptr_nodos = null;
     private Map almacenNodos = new HashMap<Integer,Nodo>();
+    private ArrayList<Nodo> almacen = new ArrayList<Nodo>();
 
     private Nodos() {
     }
@@ -97,7 +98,7 @@ public class Nodos {
 
     public ArrayList<Nodo> getAlmacen()
     {
-        ArrayList<Nodo> almacen = new ArrayList<Nodo>();
+        almacen.clear();
         int i = 0;
         Set set = almacenNodos.entrySet();
         Iterator iterator = set.iterator();

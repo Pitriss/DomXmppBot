@@ -14,15 +14,30 @@ import java.net.SocketException;
 import java.util.Enumeration;
 
 public class Server {
-    MainActivity activity;
+    //MainActivity activity;
     ServerSocket serverSocket;
     String message = "";
     static final int socketServerPORT = 30666;
+    private static Server ptr_tcp = null;
 
-    public Server(MainActivity activity) {
-        this.activity = activity;
+    /*private Server(MainActivity activity) {
+        //this.activity = activity;
         Thread socketServerThread = new Thread(new SocketServerThread());
         socketServerThread.start();
+    }*/
+
+    private Server() {
+        Thread socketServerThread = new Thread(new SocketServerThread());
+        socketServerThread.start();
+    }
+
+    public static Server getInstance()
+    {
+        if(ptr_tcp == null)
+        {
+            ptr_tcp = new Server();
+        }
+        return ptr_tcp;
     }
 
     public int getPort() {

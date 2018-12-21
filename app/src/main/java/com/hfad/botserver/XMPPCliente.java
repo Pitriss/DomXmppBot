@@ -25,6 +25,8 @@ public class XMPPCliente {
     private ChatManager chatManager;
     private boolean isConnected = false;
     ArrayList<String> RosterJids=new ArrayList<String>();
+    private boolean alarmaArmada = false;
+    private String alarmaClave = "1234";
 
     private XMPPCliente() {
     }
@@ -73,9 +75,19 @@ public class XMPPCliente {
                         @Override
                         public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
                             System.out.println("New message from " + from + ": " + message.getBody());
-                            //String body = message.getBody();
-                            //String [] split = body.split(" ");
-                            Nodos.getInstance().processNodoData(from.toString(),message.getBody());
+                            String body = message.getBody();
+                            String[] split = body.split(" ");
+                            if (((split[0].equals("/alarmaActivar")) || (split[0].equals("/alarmaEstado")) || (split[0].equals("/alarmaDesactivar")))&& (split[1].equals(alarmaClave))){
+                                if(split[0].equals("/alarmaActivar")) {
+                                    alarmaArmada = true;
+                                }else if(split[0].equals("/alarmaDesactivar")){
+                                    alarmaArmada = false;
+                                }
+                                sendMsj(from.toString(),"El estado actual de la alarma es " + String.valueOf(alarmaArmada));
+                            }
+                            else {
+                                Nodos.getInstance().processNodoData(from.toString(), message.getBody());
+                            }
 
                         }
                     });
@@ -114,6 +126,7 @@ public class XMPPCliente {
 
     private void loadRoster()
     {
+        RosterJids.clear();
         Roster roster = Roster.getInstanceFor(connection);
         Collection<RosterEntry> entries = roster.getEntries();
         for (RosterEntry entry : entries) {
@@ -168,6 +181,11 @@ public class XMPPCliente {
             return  false;
         }
         return true;
+    }
+
+    public boolean isAlarmaArmada()
+    {
+        return alarmaArmada;
     }
 
 }

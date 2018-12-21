@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">BotServer</string>
+    <string name="guardar">Guardar</string>
+    <string name="nombre_nodo">Nombre del Nodo</string>
+    <string name="nombre_sensor">Nombre del Sensor</string>
+    <string name="nombre_actuador">Nombre del Actuador</string>
 </resources>

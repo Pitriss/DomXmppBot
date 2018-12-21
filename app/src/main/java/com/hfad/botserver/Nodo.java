@@ -1,5 +1,7 @@
 package com.hfad.botserver;
 
+import android.text.Editable;
+
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -29,7 +31,7 @@ public class Nodo {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.replaceAll("\\s+","");
     }
 
     public String getSensorName() {
@@ -37,7 +39,7 @@ public class Nodo {
     }
 
     public void setSensorName(String sensorName) {
-        this.sensorName = sensorName;
+        this.sensorName = sensorName.replaceAll("\\s+","");
     }
 
     public String getActuadorName() {
@@ -45,15 +47,15 @@ public class Nodo {
     }
 
     public void setActuadorName(String actuadorName) {
-        this.actuadorName = actuadorName;
+        this.actuadorName = actuadorName.replaceAll("\\s+","");
     }
 
     public void processData(String data)
     {
-        if(data.equalsIgnoreCase("/sensor1\n"))
+        if((data.equalsIgnoreCase("/sensor1\n"))&&(XMPPCliente.getInstance().isAlarmaArmada()))
         {
             String msj;
-            msj = this.name + " SENSOR 1 ON";
+            msj = this.name + " " + this.sensorName + " ON";
             System.out.println("ENVIAR ESTADO SENSOR");
             XMPPCliente.getInstance().sendMsj(msj);
         }

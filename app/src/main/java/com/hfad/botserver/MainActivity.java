@@ -10,15 +10,13 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Server server;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        server = new Server(this);
+        Server.getInstance();
         XMPPCliente.getInstance().runLoggin("lamulita","Portal06","404.city");
-        String ip = server.getIpAddress();
+        String ip = Server.getInstance().getIpAddress();
         TextView label = (TextView) findViewById(R.id.ipServer);
         label.setText(ip);
 
