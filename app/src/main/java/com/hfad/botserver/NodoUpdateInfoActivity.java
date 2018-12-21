@@ -36,21 +36,15 @@ public class NodoUpdateInfoActivity extends AppCompatActivity {
 
         guardarNodos.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                //Intent intent = new Intent(MainActivity.this, ListaNodeActivity.class);
-                //startActivity(intent);
-
                 actual.setName(nodo.getText().toString());
                 actual.setSensorName(sensor.getText().toString());
                 actual.setActuadorName(actuador.getText().toString());
-
+                actual.updateDbInfo();
                 Intent replyIntent = new Intent();
                 replyIntent.putExtra(EXTRA_REPLY, "update");
                 setResult(RESULT_OK,replyIntent);
                 finish();
-
             }
         });
-
     }
 }

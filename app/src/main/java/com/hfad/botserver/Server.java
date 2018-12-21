@@ -1,5 +1,7 @@
 package com.hfad.botserver;
 
+import android.content.Context;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +21,9 @@ public class Server {
     String message = "";
     static final int socketServerPORT = 30666;
     private static Server ptr_tcp = null;
+    private Context appContext;
+
+    private MyOpenHelper db = null;
 
     /*private Server(MainActivity activity) {
         //this.activity = activity;
@@ -29,6 +34,17 @@ public class Server {
     private Server() {
         Thread socketServerThread = new Thread(new SocketServerThread());
         socketServerThread.start();
+    }
+
+    public void initDataBase(Context context)
+    {
+        appContext = context;
+        db = new MyOpenHelper(context);
+    }
+
+    public void updateNodoDBInfo(Nodo nodo)
+    {
+        db.actualizar(nodo.getName(),nodo.getSensorName(),nodo.getActuadorName(),nodo.getMac());
     }
 
     public static Server getInstance()
@@ -116,10 +132,23 @@ public class Server {
                 {
                     buffer[bytesRead] = 0;
                     salida = new String(buffer,0,bytesRead);
-
-                    if(salida.equalsIgnoreCase("/hola\n") && (nodo == null))
+                    String[] split = salida.split(" ");
+                    if((split[0].equalsIgnoreCase("/hola\n") || (split[0].equalsIgnoreCase("/hola")) && (nodo == null)))
                     {
-                        nodo = new Nodo("Nodo" + String.valueOf(cnt), (PrintStream) printStream);
+                        String mac = String.valueOf(cnt);
+                        if(split.length != 1){
+                            mac = split[1];
+                        }
+
+                        if(db != null) {
+                            nodo = db.getNodoFromMac(mac, (PrintStream) printStream);
+                        }
+
+                        if(nodo == null) {
+                            nodo = new Nodo("Nodo" + String.valueOf(cnt),mac, (PrintStream) printStream);
+                            db.insertar(nodo.getName(),nodo.getSensorName(),nodo.getActuadorName(),mac);
+                        }
+
                         if(Nodos.getInstance().saveNodo(cnt,nodo))
                         {
                             //printStream.print("Nodo salvado");
@@ -135,7 +164,6 @@ public class Server {
                         nodo.processData(salida);
                     }
 
-                    //printStream.print(salida);
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {

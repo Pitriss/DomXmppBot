@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Server.getInstance();
+        Server.getInstance().initDataBase(this);
         XMPPCliente.getInstance().runLoggin("lamulita","Portal06","404.city");
         String ip = Server.getInstance().getIpAddress();
         TextView label = (TextView) findViewById(R.id.ipServer);

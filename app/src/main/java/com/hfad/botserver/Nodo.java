@@ -10,19 +10,22 @@ public class Nodo {
     private String name;
     private String sensorName;
     private String actuadorName;
+    private String mac;
     private PrintStream printStream;
 
-    public Nodo(String name, String sensorName, String actuadorName, PrintStream printStream) {
+    public Nodo(String name, String sensorName, String actuadorName, String mac, PrintStream printStream) {
         this.name = name;
         this.sensorName = sensorName;
         this.actuadorName = actuadorName;
         this.printStream = printStream;
+        this.mac = mac;
     }
 
-    public Nodo(String name, PrintStream printStream) {
+    public Nodo(String name, String mac, PrintStream printStream) {
         this.name = name;
         this.sensorName = "sensor";
         this.actuadorName = "actuador";
+        this.mac = mac;
         this.printStream = printStream;
     }
 
@@ -64,5 +67,15 @@ public class Nodo {
     public void processDataRecibido(String from,String msj)
     {
         printStream.print(msj);
+    }
+
+    public String getMac()
+    {
+        return mac;
+    }
+
+    public void updateDbInfo()
+    {
+        Server.getInstance().updateNodoDBInfo(this);
     }
 }
