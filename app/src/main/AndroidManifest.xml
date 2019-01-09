@@ -22,7 +22,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".ListaNodeActivity" />
-        <activity android:name=".NodoUpdateInfoActivity"></activity>
+        <activity android:name=".NodoUpdateInfoActivity" />
+
+        <service
+            android:name=".BotService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
