@@ -1,43 +1,78 @@
 package com.hfad.botserver;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
+import android.content.pm.PackageManager;
+import android.graphics.Camera;
+import android.graphics.ImageFormat;
+import android.graphics.SurfaceTexture;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.OutputConfiguration;
+import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.Image;
+import android.media.ImageReader;
 import android.os.Build;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Size;
+import android.util.SparseIntArray;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.security.Policy;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
+import dk.schaumburgit.stillsequencecamera.camera2.CaptureManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    BotService mService = null;
+    private BotService mService = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        //String ip = Server.getInstance().getIpAddress();
-        //TextView label = (TextView) findViewById(R.id.ipServer);
-        //label.setText(ip);
-
         Button verNodos = (Button) findViewById(R.id.btNodes);
+        Button bt_take = (Button) findViewById(R.id.btn_takepicture);
 
         verNodos.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -48,6 +83,19 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+
+        bt_take.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                //photo.takePicture();
+                //Intent intent = new Intent(MainActivity.this, PhotoActivity.class);
+                //startActivity(intent);
+            }
+        });
+
+
 
     }
 
@@ -79,7 +127,12 @@ public class MainActivity extends AppCompatActivity {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             BotService.LocalBinder binder = (BotService.LocalBinder) service;
             mService = binder.getService();
-            mService.getServerInstance().initDataBase(MainActivity.this);
+
+            Server.setInstance(mService.getServerInstance());
+            XMPPCliente.setInstance(mService.getXMPPInstance());
+            Nodos.setInstance(mService.getNodosInstance());
+
+            mService.getServerInstance().initDataBase(MainActivity.this,MainActivity.this);
 
             String ip = mService.getServerInstance().getIpAddress();
             TextView label = (TextView) findViewById(R.id.ipServer);

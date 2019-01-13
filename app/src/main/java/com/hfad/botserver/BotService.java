@@ -128,53 +128,7 @@ public class BotService extends Service {
         }
     }
 
-    /*private class MyTask extends AsyncTask<String, String, String> {
 
-        private DateFormat dateFormat;
-        private String date;
-        private boolean cent;
-        private int miNumber = 0;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            dateFormat = new SimpleDateFormat("HH:mm:ss");
-            cent = true;
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            while (cent){
-                date = dateFormat.format(new Date());
-                try {
-                    publishProgress(date);
-                    // Stop 5s
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-        //    miNumber++;
-            Toast.makeText(getApplicationContext(), "Hora actual: " + values[0] + " Number: " + miNumber, Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            cent = false;
-        }
-
-        public int increseNumber()
-        {
-            return ++miNumber;
-        }
-
-    }*/
 
     public int getNumberTest()
     {
@@ -187,5 +141,10 @@ public class BotService extends Service {
     public XMPPCliente getXMPPInstance()
     {
         return XMPPCliente.getInstance();
+    }
+
+    public Nodos getNodosInstance()
+    {
+        return Nodos.getInstance();
     }
 }

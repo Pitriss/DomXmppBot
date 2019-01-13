@@ -1,5 +1,7 @@
 package com.hfad.botserver;
 
+import android.util.Log;
+
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -7,13 +9,22 @@ import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smackx.filetransfer.FileTransfer;
+import org.jivesoftware.smackx.filetransfer.FileTransferManager;
+import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
+import org.jivesoftware.smackx.si.packet.StreamInitiation;
 import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +36,7 @@ public class XMPPCliente {
     private ChatManager chatManager;
     private boolean isConnected = false;
     ArrayList<String> RosterJids=new ArrayList<String>();
-    private boolean alarmaArmada = false;
+    private boolean alarmaArmada = true;
     private String alarmaClave = "1234";
 
     private XMPPCliente() {
@@ -40,6 +51,11 @@ public class XMPPCliente {
         return ptr_xmpp;
     }
 
+    public static void setInstance(XMPPCliente instance)
+    {
+        ptr_xmpp = instance;
+    }
+
     public void checkIsConnected(final String user, final String pass, final String domain) {
         Thread thread = new Thread() {
             @Override
@@ -47,7 +63,7 @@ public class XMPPCliente {
                 while(connection.isAuthenticated())
                 {
                     try {
-                        Thread.sleep(30000);
+                        Thread.sleep(15000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -130,9 +146,30 @@ public class XMPPCliente {
         Roster roster = Roster.getInstanceFor(connection);
         Collection<RosterEntry> entries = roster.getEntries();
         for (RosterEntry entry : entries) {
-            System.out.println(entry);
-            RosterJids.add(entry.toString());
+            System.out.println(entry.toString()+"/"+entry.getJid().getResourceOrEmpty().toString());
+            RosterJids.add(entry.toString()+"/"+entry.getJid().getResourceOrEmpty().toString());
         }
+
+        roster.addRosterListener(new RosterListener() {
+            @Override
+            public void entriesAdded(Collection<Jid> addresses) {
+                System.out.println("Presence entry: " + addresses.toString());
+            }
+
+            @Override
+            public void entriesUpdated(Collection<Jid> addresses) {
+                System.out.println("Presence update: " + addresses.toString());
+            }
+
+            @Override
+            public void entriesDeleted(Collection<Jid> addresses) {
+
+            }
+
+            public void presenceChanged(Presence presence) {
+                System.out.println("Presence changed: " + presence.getFrom() + " " + presence);
+            }
+        });
     }
 
     public boolean sendMsj(String user, String msj)
@@ -186,6 +223,27 @@ public class XMPPCliente {
     public boolean isAlarmaArmada()
     {
         return alarmaArmada;
+    }
+
+    public void sendFile(String filepath) {
+// Create the file transfer manager
+        FileTransferManager manager = FileTransferManager.getInstanceFor(connection);
+// Create the outgoing file transfer
+        OutgoingFileTransfer transfer = null;
+        File file = new File(filepath);
+        Log.i("XMPP",file.toString());
+        try {
+            transfer = manager.createOutgoingFileTransfer(JidCreate.entityFullFrom("elcuco@404.city/Pix-Art Messenger.rbjE"));
+        } catch (XmppStringprepException e) {
+            e.printStackTrace();
+        }
+// Send the file
+        try {
+            transfer.sendFile(file, "You won't believe this!");
+        } catch (SmackException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

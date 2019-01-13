@@ -24,6 +24,11 @@ public class Nodos {
         return ptr_nodos;
     }
 
+    public static void setInstance(Nodos nodo)
+    {
+        ptr_nodos = nodo;
+    }
+
     public boolean saveNodo(Integer id, Nodo nodo)
     {
         if(!almacenNodos.containsKey(id))

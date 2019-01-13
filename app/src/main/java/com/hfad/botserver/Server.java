@@ -1,5 +1,6 @@
 package com.hfad.botserver;
 
+import android.app.Activity;
 import android.content.Context;
 
 import java.io.BufferedReader;
@@ -22,6 +23,7 @@ public class Server {
     static final int socketServerPORT = 30666;
     private static Server ptr_tcp = null;
     private Context appContext;
+    private TakePhoto photo;
 
     private MyOpenHelper db = null;
 
@@ -32,14 +34,22 @@ public class Server {
     }*/
 
     private Server() {
+
         Thread socketServerThread = new Thread(new SocketServerThread());
         socketServerThread.start();
     }
 
-    public void initDataBase(Context context)
+    public void initDataBase(Context context, Activity activity)
     {
         appContext = context;
         db = new MyOpenHelper(context);
+        photo = new TakePhoto(activity);
+    }
+
+    public String takePhoto()
+    {
+        //photo.takePicture();
+        return photo.getFileName();
     }
 
     public void updateNodoDBInfo(Nodo nodo)
@@ -54,6 +64,11 @@ public class Server {
             ptr_tcp = new Server();
         }
         return ptr_tcp;
+    }
+
+    public static void setInstance(Server instance)
+    {
+        ptr_tcp = instance;
     }
 
     public int getPort() {

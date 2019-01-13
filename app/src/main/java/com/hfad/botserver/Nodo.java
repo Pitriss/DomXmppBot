@@ -1,6 +1,9 @@
 package com.hfad.botserver;
 
+import android.app.Service;
 import android.text.Editable;
+
+import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -53,14 +56,14 @@ public class Nodo {
         this.actuadorName = actuadorName.replaceAll("\\s+","");
     }
 
-    public void processData(String data)
-    {
+    public void processData(String data) throws XmppStringprepException {
         if((data.equalsIgnoreCase("/sensor1\n"))&&(XMPPCliente.getInstance().isAlarmaArmada()))
         {
             String msj;
             msj = this.name + " " + this.sensorName + " ON";
             System.out.println("ENVIAR ESTADO SENSOR");
             XMPPCliente.getInstance().sendMsj(msj);
+            XMPPCliente.getInstance().sendFile(Server.getInstance().takePhoto());
         }
     }
 
