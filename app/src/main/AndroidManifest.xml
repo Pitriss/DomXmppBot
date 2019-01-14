@@ -36,6 +36,7 @@
             android:enabled="true"
             android:exported="true" />
 
+        <activity android:name=".Usuario"></activity>
     </application>
 
 </manifest>

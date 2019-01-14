@@ -89,42 +89,45 @@ public class BotService extends Service {
         public void run() {
 
             Server.getInstance();//.initDataBase(this);
-            XMPPCliente.getInstance().runLoggin("lamulita","Portal06","404.city");
 
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(BotService.this,"1234")
-                            .setSmallIcon(android.R.drawable.stat_notify_sync)
-                            .setContentTitle("Mensaje de Alerta")
-                            .setContentText("Ejemplo de notificación.");
-                            //.setOngoing(true);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            String user = Server.getInstance().getDb().getUsuario();
+            String password = Server.getInstance().getDb().getPassword();
+
+            String[] dato = user.split("@");
+
+            if(user != "") {
+                XMPPCliente.getInstance().runLoggin(dato[0], password, dato[1]);
+                //XMPPCliente.getInstance().runLoggin("lamulita","Portal06","404.city");
+
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(BotService.this, "1234")
+                                .setSmallIcon(android.R.drawable.stat_notify_sync)
+                                .setContentTitle("Mensaje de Alerta")
+                                .setContentText("Ejemplo de notificación.");
+                //.setOngoing(true);
 
 
+                //Intent notIntent = intent;
 
-            //Intent notIntent = intent;
+                //PendingIntent contIntent =
+                //        PendingIntent.getActivity(
+                //                this, 0, notIntent, 0);
 
-            //PendingIntent contIntent =
-            //        PendingIntent.getActivity(
-            //                this, 0, notIntent, 0);
+                //mBuilder.setContentIntent(contIntent);
 
-            //mBuilder.setContentIntent(contIntent);
+                NotificationManager mNotificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            NotificationManager mNotificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                Notification notification = mBuilder.build();
+                mNotificationManager.notify(1234, notification);
 
-            Notification notification = mBuilder.build();
-            mNotificationManager.notify(1234, notification);
-
-            startForeground(1234,notification);
-
-            /*while(true) {
-                try {
-                    //Server.getInstance();
-                    //XMPPCliente.getInstance();
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }*/
+                startForeground(1234, notification);
+            }
         }
     }
 

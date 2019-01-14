@@ -369,18 +369,18 @@ public class TakePhoto {
         // Pick the smallest of those big enough. If there is no one big enough, pick the
         // largest of those not big enough.
         if (bigEnough.size() > 0) {
-            return Collections.min(bigEnough, new Camera2BasicFragment.CompareSizesByArea());
+            return Collections.min(bigEnough, new TakePhoto.CompareSizesByArea());
         } else if (notBigEnough.size() > 0) {
-            return Collections.max(notBigEnough, new Camera2BasicFragment.CompareSizesByArea());
+            return Collections.max(notBigEnough, new TakePhoto.CompareSizesByArea());
         } else {
             Log.e(TAG, "Couldn't find any suitable preview size");
             return choices[0];
         }
     }
 
-    public static Camera2BasicFragment newInstance() {
-        return new Camera2BasicFragment();
-    }
+    //public static Camera2BasicFragment newInstance() {
+    //    return new Camera2BasicFragment();
+    //}
 
     TakePhoto(Activity activity)
     {
@@ -433,7 +433,7 @@ public class TakePhoto {
                 // For still image captures, we use the largest available size.
                 Size largest = Collections.max(
                         Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
-                        new Camera2BasicFragment.CompareSizesByArea());
+                        new TakePhoto.CompareSizesByArea());
                 mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(),
                         ImageFormat.JPEG, /*maxImages*/2);
                 mImageReader.setOnImageAvailableListener(
@@ -518,7 +518,7 @@ public class TakePhoto {
     }
 
     /**
-     * Opens the camera specified by {@link Camera2BasicFragment#mCameraId}.
+     * Opens the camera specified by {@link TakePhoto#mCameraId}.
      */
     private void openCamera(int width, int height) {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
@@ -823,8 +823,8 @@ public class TakePhoto {
 
         private static final String ARG_MESSAGE = "message";
 
-        public static Camera2BasicFragment.ErrorDialog newInstance(String message) {
-            Camera2BasicFragment.ErrorDialog dialog = new Camera2BasicFragment.ErrorDialog();
+        public static TakePhoto.ErrorDialog newInstance(String message) {
+            TakePhoto.ErrorDialog dialog = new TakePhoto.ErrorDialog();
             Bundle args = new Bundle();
             args.putString(ARG_MESSAGE, message);
             dialog.setArguments(args);

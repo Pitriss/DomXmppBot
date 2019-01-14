@@ -62,6 +62,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int USER_SETTING_REQUEST = 1;
+    private Intent miIntent = null;
+
     private BotService mService = null;
 
     @Override
@@ -86,15 +89,30 @@ public class MainActivity extends AppCompatActivity {
 
         bt_take.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                //photo.takePicture();
-                //Intent intent = new Intent(MainActivity.this, PhotoActivity.class);
-                //startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, Usuario.class);
+                startActivityForResult(intent,USER_SETTING_REQUEST);
             }
         });
 
 
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        //if (requestCode == USER_SETTING_REQUEST) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                if(miIntent != null) {
+                    stopService(miIntent);
+                }
+                startService(miIntent);
+                // startForegroundService(new Intent(MainActivity.this, BotService.class));
+                Intent intent = new Intent(this, BotService.class);
+                bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+            }
+        //}
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -104,7 +122,8 @@ public class MainActivity extends AppCompatActivity {
 
         if(mService == null) {
 
-            startService(new Intent(MainActivity.this, BotService.class));
+            miIntent = new Intent(MainActivity.this, BotService.class);
+            startService(miIntent);
            // startForegroundService(new Intent(MainActivity.this, BotService.class));
             Intent intent = new Intent(this, BotService.class);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -127,10 +146,12 @@ public class MainActivity extends AppCompatActivity {
             mService = binder.getService();
 
             Server.setInstance(mService.getServerInstance());
+            mService.getServerInstance().initDataBase(MainActivity.this,MainActivity.this);
+
             XMPPCliente.setInstance(mService.getXMPPInstance());
             Nodos.setInstance(mService.getNodosInstance());
 
-            mService.getServerInstance().initDataBase(MainActivity.this,MainActivity.this);
+
 
             String ip = mService.getServerInstance().getIpAddress();
             TextView label = (TextView) findViewById(R.id.ipServer);

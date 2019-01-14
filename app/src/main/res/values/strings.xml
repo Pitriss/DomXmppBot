@@ -22,4 +22,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="user">Usuario</string>
+    <string name="input_user">usuario</string>
+    <string name="input_password">password</string>
+    <string name="user_save">Guardar</string>
 </resources>

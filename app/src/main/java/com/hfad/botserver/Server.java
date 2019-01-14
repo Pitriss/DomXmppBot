@@ -232,6 +232,11 @@ public class Server {
         }
     }
 
+    public MyOpenHelper getDb()
+    {
+        return db;
+    }
+
     public String getIpAddress() {
         String ip = "";
         try {

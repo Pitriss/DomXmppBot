@@ -278,7 +278,7 @@ public class XMPPCliente {
         return true;
     }
 
-    public boolean sendMessage(String subject, final String body)
+    public boolean sendImage(final String body)
     {
 
         if(isConnected) {
@@ -340,7 +340,7 @@ public class XMPPCliente {
             {
                 URL url = manager.uploadFile(file);
                 //sendMessage("image",url.toString());
-                sendMessage("",url.toString());
+                sendImage(url.toString());
 
             }
         } catch (XMPPException.XMPPErrorException e) {
