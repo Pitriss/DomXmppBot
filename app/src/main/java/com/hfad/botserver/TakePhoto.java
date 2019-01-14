@@ -221,7 +221,14 @@ public class TakePhoto {
 
         @Override
         public void onImageAvailable(ImageReader reader) {
-            mBackgroundHandler.post(new TakePhoto.ImageSaver(reader.acquireNextImage(), mFile));
+            Thread image = new Thread(new TakePhoto.ImageSaver(reader.acquireNextImage(), mFile));
+            //mBackgroundHandler.post(image);
+            image.start();
+            try {
+                image.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
     };
@@ -646,6 +653,7 @@ public class TakePhoto {
      */
     public void takePicture() {
         ready = false;
+
         lockFocus();
     }
 
@@ -760,7 +768,7 @@ public class TakePhoto {
     /**
      * Saves a JPEG {@link Image} into the specified {@link File}.
      */
-    private static class ImageSaver implements Runnable {
+    private static class ImageSaver extends Thread {
 
         /**
          * The JPEG image
