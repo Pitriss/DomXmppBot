@@ -48,8 +48,38 @@ public class Server {
 
     public String takePhoto()
     {
-        //photo.takePicture();
+        Thread photoThread = new Thread(new takePicture());
+        photoThread.start();
+        try {
+            photoThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         return photo.getFileName();
+    }
+
+    private class takePicture extends Thread {
+        @Override
+        public void run() {
+            photo.takePicture();
+
+            while(photo.isPictureReady() == false)
+            {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     public void updateNodoDBInfo(Nodo nodo)

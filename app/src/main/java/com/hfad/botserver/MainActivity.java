@@ -60,8 +60,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import dk.schaumburgit.stillsequencecamera.camera2.CaptureManager;
-
 public class MainActivity extends AppCompatActivity {
 
     private BotService mService = null;

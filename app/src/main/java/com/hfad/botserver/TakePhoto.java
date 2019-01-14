@@ -108,6 +108,8 @@ public class TakePhoto {
      */
     private static final int MAX_PREVIEW_HEIGHT = 1080;
 
+    private static boolean ready = false;
+
     /**
      * {@link TextureView.SurfaceTextureListener} handles several lifecycle events on a
      * {@link TextureView}.
@@ -643,7 +645,13 @@ public class TakePhoto {
      * Initiate a still image capture.
      */
     public void takePicture() {
+        ready = false;
         lockFocus();
+    }
+
+    public boolean isPictureReady()
+    {
+        return ready;
     }
 
     /**
@@ -784,6 +792,7 @@ public class TakePhoto {
                 if (null != output) {
                     try {
                         output.close();
+                        ready = true;
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

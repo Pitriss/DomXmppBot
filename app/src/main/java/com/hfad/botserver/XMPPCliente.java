@@ -17,6 +17,8 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
+import org.jivesoftware.smackx.httpfileupload.HttpFileUploadManager;
+import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
 import org.jivesoftware.smackx.si.packet.StreamInitiation;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
@@ -26,6 +28,7 @@ import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -101,6 +104,10 @@ public class XMPPCliente {
                                 }
                                 sendMsj(from.toString(),"El estado actual de la alarma es " + String.valueOf(alarmaArmada));
                             }
+                            else if((split[0].equals("/foto")) && (split[1].equals(alarmaClave)))
+                            {
+                                new Thread(new sendPicture()).start();
+                            }
                             else {
                                 Nodos.getInstance().processNodoData(from.toString(), message.getBody());
                             }
@@ -138,6 +145,18 @@ public class XMPPCliente {
         };
 
         thread.start();
+    }
+
+    private class sendPicture extends Thread {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(1000);
+                sendFile(Server.getInstance().takePhoto());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void loadRoster()
@@ -220,13 +239,68 @@ public class XMPPCliente {
         return true;
     }
 
+    public boolean sendMessage(String subject, String body)
+    {
+
+        if(isConnected) {
+            EntityBareJid jid = null;
+            try {
+                for(String user:RosterJids) {
+                    jid = JidCreate.entityBareFrom(user);
+                    Chat chat = chatManager.chatWith(jid);
+                    Message message = new Message(jid);
+                    message.setBody(body);
+                    //message.setSubject(subject);
+                    JivePropertiesManager.addProperty(message, "url", body);
+                    chat.send(message);
+                }
+            } catch (XmppStringprepException e) {
+                e.printStackTrace();
+            } catch (SmackException.NotConnectedException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            return  false;
+        }
+        return true;
+    }
+
     public boolean isAlarmaArmada()
     {
         return alarmaArmada;
     }
 
     public void sendFile(String filepath) {
-// Create the file transfer manager
+        HttpFileUploadManager manager = HttpFileUploadManager.getInstanceFor(connection);
+        File file = new File(filepath);
+        try {
+            if(manager.discoverUploadService())
+            {
+                URL url = manager.uploadFile(file);
+                sendMessage("<x xmlns='jabber:x:oob'>\n" +
+                        "<url>" + url.toString() + "</url>\n" +
+                        "</x>",url.toString());
+            }
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SmackException e) {
+            e.printStackTrace();
+        }
+
+
+/*// Create the file transfer manager
         FileTransferManager manager = FileTransferManager.getInstanceFor(connection);
 // Create the outgoing file transfer
         OutgoingFileTransfer transfer = null;
@@ -243,7 +317,7 @@ public class XMPPCliente {
         } catch (SmackException e) {
             e.printStackTrace();
         }
-
+*/
     }
 
 }

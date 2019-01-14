@@ -57,13 +57,24 @@ public class Nodo {
     }
 
     public void processData(String data) throws XmppStringprepException {
-        if((data.equalsIgnoreCase("/sensor1\n"))&&(XMPPCliente.getInstance().isAlarmaArmada()))
-        {
+        if((data.equalsIgnoreCase("/sensor1\n"))&&(XMPPCliente.getInstance().isAlarmaArmada())) {
             String msj;
             msj = this.name + " " + this.sensorName + " ON";
             System.out.println("ENVIAR ESTADO SENSOR");
             XMPPCliente.getInstance().sendMsj(msj);
-            XMPPCliente.getInstance().sendFile(Server.getInstance().takePhoto());
+            new Thread(new sendPicture()).start();
+        }
+    }
+
+    private class sendPicture extends Thread {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(1000);
+                XMPPCliente.getInstance().sendFile(Server.getInstance().takePhoto());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
