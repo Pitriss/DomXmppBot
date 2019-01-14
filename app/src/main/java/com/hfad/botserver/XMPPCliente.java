@@ -8,6 +8,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
@@ -20,6 +21,9 @@ import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.smackx.httpfileupload.HttpFileUploadManager;
 import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
 import org.jivesoftware.smackx.si.packet.StreamInitiation;
+import org.jivesoftware.smackx.xhtmlim.XHTMLManager;
+import org.jivesoftware.smackx.xhtmlim.XHTMLText;
+import org.jivesoftware.smackx.xhtmlim.packet.XHTMLExtension;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.Jid;
@@ -31,6 +35,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
 
 public class XMPPCliente {
 
@@ -93,7 +99,12 @@ public class XMPPCliente {
                     chatManager.addIncomingListener(new IncomingChatMessageListener() {
                         @Override
                         public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
-                            System.out.println("New message from " + from + ": " + message.getBody());
+                            System.out.println("New message from " + from + ": " + message.toXML("test"));
+                            /*try {
+                                sendMessage(message, JidCreate.entityBareFrom(from));
+                            } catch (XmppStringprepException e) {
+                                e.printStackTrace();
+                            }*/
                             String body = message.getBody();
                             String[] split = body.split(" ");
                             if (((split[0].equals("/alarmaActivar")) || (split[0].equals("/alarmaEstado")) || (split[0].equals("/alarmaDesactivar")))&& (split[1].equals(alarmaClave))){
@@ -191,6 +202,34 @@ public class XMPPCliente {
         });
     }
 
+    public boolean sendMessage(Message msj, EntityBareJid jid)
+    {
+        Chat chat = chatManager.chatWith(jid);
+        String subject = msj.getSubject();
+        String body = msj.getBody();
+        String pirulo = msj.getType().toString();
+        List<ExtensionElement> ext = msj.getExtensions();
+
+
+
+        System.out.println(ext.size());
+
+        for(int i = 0; i < ext.size(); i++) {
+            System.out.println(ext.get(i).getNamespace());
+        }
+
+        System.out.println(ext.get(5).toXML("") + " -> " + ext.get(5).getElementName());
+
+        try {
+            chat.send(msj);
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
     public boolean sendMsj(String user, String msj)
     {
         if(isConnected) {
@@ -239,7 +278,7 @@ public class XMPPCliente {
         return true;
     }
 
-    public boolean sendMessage(String subject, String body)
+    public boolean sendMessage(String subject, final String body)
     {
 
         if(isConnected) {
@@ -249,9 +288,28 @@ public class XMPPCliente {
                     jid = JidCreate.entityBareFrom(user);
                     Chat chat = chatManager.chatWith(jid);
                     Message message = new Message(jid);
+
                     message.setBody(body);
-                    //message.setSubject(subject);
-                    JivePropertiesManager.addProperty(message, "url", body);
+
+                    ExtensionElement element = new ExtensionElement() {
+                        @Override
+                        public String getNamespace() {
+                            return "jabber:x:oob";
+                        }
+
+                        @Override
+                        public String getElementName() {
+                            return "x";
+                        }
+
+                        @Override
+                        public CharSequence toXML(String enclosingNamespace) {
+                            return "<x xmlns='jabber:x:oob' xmlns:stream='http://etherx.jabber.org/streams'><url xmlns:stream='http://etherx.jabber.org/streams'>"+body+"</url></x>";
+                        }
+                    };
+
+                    message.addExtension(element);
+
                     chat.send(message);
                 }
             } catch (XmppStringprepException e) {
@@ -281,9 +339,9 @@ public class XMPPCliente {
             if(manager.discoverUploadService())
             {
                 URL url = manager.uploadFile(file);
-                sendMessage("<x xmlns='jabber:x:oob'>\n" +
-                        "<url>" + url.toString() + "</url>\n" +
-                        "</x>",url.toString());
+                //sendMessage("image",url.toString());
+                sendMessage("",url.toString());
+
             }
         } catch (XMPPException.XMPPErrorException e) {
             e.printStackTrace();
