@@ -114,7 +114,7 @@ public class TakePhoto {
      * {@link TextureView.SurfaceTextureListener} handles several lifecycle events on a
      * {@link TextureView}.
      */
-    private final TextureView.SurfaceTextureListener mSurfaceTextureListener
+    /*private final TextureView.SurfaceTextureListener mSurfaceTextureListener
             = new TextureView.SurfaceTextureListener() {
 
         @Override
@@ -137,6 +137,8 @@ public class TakePhoto {
         }
 
     };
+
+    */
 
     /**
      * ID of the current {@link CameraDevice}.
@@ -392,23 +394,15 @@ public class TakePhoto {
     TakePhoto(Activity activity)
     {
         mActivity = activity;
+        openCamera(MAX_PREVIEW_WIDTH,MAX_PREVIEW_HEIGHT);
         mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
         startBackgroundThread();
-        openCamera(MAX_PREVIEW_WIDTH,MAX_PREVIEW_HEIGHT);
     }
 
     /*~TakePhoto()
     {
         stopBackgroundThread();
     }*/
-
-    private void requestCameraPermission() {
-        /*if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-            new Camera2BasicFragment.ConfirmationDialog().show(getChildFragmentManager(), FRAGMENT_DIALOG);
-        } else {
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-        }*/
-    }
 
     /**
      * Sets up member variables related to camera.
@@ -530,7 +524,6 @@ public class TakePhoto {
     private void openCamera(int width, int height) {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
-            requestCameraPermission();
             return;
         }
         setUpCameraOutputs(width, height);
