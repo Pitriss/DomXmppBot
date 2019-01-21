@@ -100,9 +100,8 @@ public class BotService extends Service {
 
             String[] dato = user.split("@");
 
-            if(user != "") {
+            if(!user.contentEquals("")) {
                 XMPPCliente.getInstance().runLoggin(dato[0], password, dato[1]);
-                //XMPPCliente.getInstance().runLoggin("lamulita","Portal06","404.city");
 
                 NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(BotService.this, "1234")

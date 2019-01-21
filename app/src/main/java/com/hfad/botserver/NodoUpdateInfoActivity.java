@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import java.util.ArrayList;
@@ -27,10 +28,12 @@ public class NodoUpdateInfoActivity extends AppCompatActivity {
         final EditText nodo = (EditText) findViewById(R.id.edNodo);
         final EditText sensor = (EditText) findViewById(R.id.edSensor);
         final EditText actuador = (EditText) findViewById(R.id.edActuador);
+        final CheckBox takephoto = (CheckBox) findViewById(R.id.cbTakePhoto);
 
         nodo.setText(actual.getName());
         sensor.setText(actual.getSensorName());
         actuador.setText(actual.getActuadorName());
+        takephoto.setChecked(actual.getTakePhoto());
 
         Button guardarNodos = (Button) findViewById(R.id.btGuardar);
 
@@ -39,6 +42,7 @@ public class NodoUpdateInfoActivity extends AppCompatActivity {
                 actual.setName(nodo.getText().toString());
                 actual.setSensorName(sensor.getText().toString());
                 actual.setActuadorName(actuador.getText().toString());
+                actual.setTakePhoto(takephoto.isChecked());
                 actual.updateDbInfo();
                 Intent replyIntent = new Intent();
                 replyIntent.putExtra(EXTRA_REPLY, "update");

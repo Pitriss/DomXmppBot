@@ -26,4 +26,5 @@
     <string name="input_user">usuario</string>
     <string name="input_password">password</string>
     <string name="user_save">Guardar</string>
+    <string name="takephoto">Tomar Foto?</string>
 </resources>

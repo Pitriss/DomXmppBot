@@ -84,7 +84,7 @@ public class Server {
 
     public void updateNodoDBInfo(Nodo nodo)
     {
-        db.actualizar(nodo.getName(),nodo.getSensorName(),nodo.getActuadorName(),nodo.getMac());
+        db.actualizar(nodo.getName(),nodo.getSensorName(),nodo.getActuadorName(),nodo.getMac(),nodo.getTakePhoto());
     }
 
     public static Server getInstance()

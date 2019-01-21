@@ -31,6 +31,12 @@
         android:hint="@string/nombre_actuador"
         android:inputType="textPersonName" />
 
+    <CheckBox
+        android:id="@+id/cbTakePhoto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/takephoto" />
+
     <Button
         android:id="@+id/btGuardar"
         android:layout_width="match_parent"

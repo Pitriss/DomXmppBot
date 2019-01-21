@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyOpenHelper extends SQLiteOpenHelper {
-    private static final String NODOS_TABLE_CREATE = "CREATE TABLE nodos(_id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, sensor TEXT, actuador TEXT, mac TEXT)";
+    private static final String NODOS_TABLE_CREATE = "CREATE TABLE nodos(_id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, sensor TEXT, actuador TEXT, mac TEXT, takephoto TEXT)";
     private static final String USER_TABLE_CREATE = "CREATE TABLE user(_id INTEGER PRIMARY KEY AUTOINCREMENT, usuario TEXT, password TEXT)";
     private static final String DB_NAME = "nodos.sqlite";
     private static final int DB_VERSION = 1;
@@ -126,6 +126,7 @@ public class MyOpenHelper extends SQLiteOpenHelper {
         cv.put("sensor", sensor);
         cv.put("actuador", actuador);
         cv.put("mac", mac);
+        cv.put("takephoto","0");
         db.insert("nodos", null, cv);
     }
 
@@ -163,7 +164,7 @@ public class MyOpenHelper extends SQLiteOpenHelper {
     public Nodo getNodoFromMac(String mac, PrintStream ps)
     {
         String[] args = new String[]{mac};
-        Cursor c = db.rawQuery("select _id, nombre,sensor,actuador,mac from nodos where mac=?", args);
+        Cursor c = db.rawQuery("select _id, nombre,sensor,actuador,mac,takephoto from nodos where mac=?", args);
         Nodo nodo = null;
         if (c != null && c.getCount()>0) {
             c.moveToFirst();
@@ -172,9 +173,16 @@ public class MyOpenHelper extends SQLiteOpenHelper {
                 String nombre = c.getString(c.getColumnIndex("nombre"));
                 String sensor = c.getString(c.getColumnIndex("sensor"));
                 String actuador = c.getString(c.getColumnIndex("actuador"));
+                String photo = c.getString(c.getColumnIndex("takephoto"));
+                boolean take = false;
+
+                if(photo.contentEquals("1"))
+                {
+                    take = true;
+                }
                 mac = c.getString(c.getColumnIndex("mac"));
                 int id=c.getInt(c.getColumnIndex("_id"));
-                nodo = new Nodo(nombre,sensor,actuador,mac,ps);
+                nodo = new Nodo(nombre,sensor,actuador,mac,ps,take);
                 //Añadimos el comentario a la lista
                 //lista.add(com);
             } while (c.moveToNext());
@@ -185,7 +193,7 @@ public class MyOpenHelper extends SQLiteOpenHelper {
         return nodo;
     }
 
-    public void actualizar(String name, String sensorName, String actuadorName, String mac) {
+    public void actualizar(String name, String sensorName, String actuadorName, String mac, boolean takePhoto) {
         String[] args = new String[]{mac};
         Cursor c = db.rawQuery("select _id, nombre,sensor,actuador,mac from nodos where mac=?", args);
         int id = 0;
@@ -210,6 +218,14 @@ public class MyOpenHelper extends SQLiteOpenHelper {
             cv.put("sensor", sensorName);
             cv.put("actuador", actuadorName);
             cv.put("mac", mac);
+            if(takePhoto == true)
+            {
+                cv.put("takephoto","1");
+            }
+            else {
+                cv.put("takephoto","0");
+            }
+
             String[] argsUpdate = new String[]{String.valueOf(id)};
             db.update("nodos", cv,"_id=?",argsUpdate);
         }

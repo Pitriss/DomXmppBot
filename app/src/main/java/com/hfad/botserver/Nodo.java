@@ -13,15 +13,17 @@ public class Nodo {
     private String name;
     private String sensorName;
     private String actuadorName;
+    private boolean takePhoto;
     private String mac;
     private PrintStream printStream;
 
-    public Nodo(String name, String sensorName, String actuadorName, String mac, PrintStream printStream) {
+    public Nodo(String name, String sensorName, String actuadorName, String mac, PrintStream printStream, boolean take) {
         this.name = name;
         this.sensorName = sensorName;
         this.actuadorName = actuadorName;
         this.printStream = printStream;
         this.mac = mac;
+        this.takePhoto = take;
     }
 
     public Nodo(String name, String mac, PrintStream printStream) {
@@ -30,6 +32,17 @@ public class Nodo {
         this.actuadorName = "actuador";
         this.mac = mac;
         this.printStream = printStream;
+        this.takePhoto = false;
+    }
+
+    public boolean getTakePhoto()
+    {
+        return takePhoto;
+    }
+
+    public void setTakePhoto(boolean take)
+    {
+        takePhoto = take;
     }
 
     public String getName() {
@@ -62,7 +75,9 @@ public class Nodo {
             msj = this.name + " " + this.sensorName + " ON";
             System.out.println("ENVIAR ESTADO SENSOR");
             XMPPCliente.getInstance().sendMsj(msj);
-            new Thread(new sendPicture()).start();
+            if(this.takePhoto) {
+                new Thread(new sendPicture()).start();
+            }
         }
     }
 
