@@ -7,7 +7,7 @@ En la cuenta del bot tenes que agregar de contacto tu cuenta y todas las cuentas
 
 En tu celular podes instalarte cualquier cliente, por afinidad recomiendo pix-art-messager https://github.com/kriztan/Pix-Art-Messenger.git podes encontrar un version compilada en f-droid.org
 
-La aplicación se ejecuta en un servicio en background todo el tiempo. Se deben conectar los nodos inalambricos mediante ESP8266, el código esta en la carpeta ESP8266, y también hay un binario para simplificar la tarea.
+La aplicación se ejecuta en un servicio en background todo el tiempo. Se deben conectar los nodos inalambricos mediante ESP8266, el código esta en https://github.com/sebest06/Esp8266DomBot.git y también hay un binario para simplificar la tarea.
 
 Los nodos se conectan al celular, que actua de servidor, (todos en la misma red). Cada vez que uno de los pines del esp se acciona se envía un msj por xmpp a todos los contactos. Esta funcion se puede activar o desactivar mediante los comandos
 
