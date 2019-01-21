@@ -12,8 +12,33 @@ La aplicación se ejecuta en un servicio en background todo el tiempo. Se deben 
 Los nodos se conectan al celular, que actua de servidor, (todos en la misma red). Cada vez que uno de los pines del esp se acciona se envía un msj por xmpp a todos los contactos. Esta funcion se puede activar o desactivar mediante los comandos
 
 /alarmaActivar 1234
+
 /alarmaDesactivar 1234
+
 /alarmaEstado 1234
 
 y se puede tomar una foto mediante el comando
+
 /foto 1234
+
+# Probar sin ESP8266
+Desde una consola de linux podemos usar el comando nc para probar como si fueramos un nodo
+
+se ejecuta
+
+nc 192.168.x.xxx 30666
+
+La ip es la del celular, la aplicación la dice apenas inicia
+
+Después nos loggeamos con el comando
+
+/hola XXXX
+
+Donde XXXX es el número de serie reemplazar por cualquier número, se debe usar el mismo si se quiere recuperar los datos almacenados en la base de datos.
+
+después con el comando 
+
+/sensor1
+
+Se envía la activación del sensor.
+
